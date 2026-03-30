@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: epics-db
+    environment:
+      POSTGRES_USER: epicsadmin
+      POSTGRES_PASSWORD: epicsPassword123!
+      POSTGRES_DB: epics_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U epicsadmin -d epics_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - epics_network
+
+  api:
+    build: .
+    container_name: epics-api
+    environment:
+      DATABASE_URL: postgresql://epicsadmin:epicsPassword123!@postgres:5432/epics_db?sslmode=disable
+      JWT_SECRET_KEY: your-256-bit-secret-key-generate-with-openssl-rand-hex-32
+      API_KEY: your-openweathermap-api-key
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8000
+      ENVIRONMENT: development
+      LOG_LEVEL: DEBUG
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    networks:
+      - epics_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  epics_network:
+    driver: bridge

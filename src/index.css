@@ -1,0 +1,99 @@
+/* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base + components for a cleaner UI */
+@layer base {
+	html, body, #root {
+		height: 100%;
+		scroll-behavior: smooth;
+	}
+	body {
+		font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	::selection {
+		background-color: #bbf7d0; /* green-200 */
+		color: #1f2937; /* gray-800 */
+	}
+}
+
+@layer components {
+	/* Google Translate widget alignment inside header */
+	#google_translate_element {
+		@apply text-xs;
+	}
+
+	#google_translate_element .goog-te-gadget {
+		@apply text-white;
+		font-family: inherit;
+	}
+
+	#google_translate_element .goog-te-gadget .goog-te-combo {
+		@apply w-full rounded-md border border-white/40 bg-white/90 px-2 py-1 text-xs text-gray-800;
+	}
+
+	.btn-primary {
+		@apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-md transition;
+	}
+
+	.btn-secondary {
+		@apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-green-900 bg-white/90 border border-green-200 hover:bg-white shadow-md hover:shadow-lg transition;
+	}
+
+	.card {
+		@apply bg-white rounded-2xl shadow-lg p-6 border border-green-100;
+	}
+
+	.feature-card {
+		@apply bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transform transition-transform hover:-translate-y-1;
+	}
+
+	/* Enhanced tab buttons for top navigation */
+	.tab-btn {
+		@apply px-4 py-2 rounded-lg text-sm md:text-base font-medium text-gray-700 border border-transparent hover:text-green-700 hover:bg-green-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400/50 transition;
+	}
+
+	.tab-btn-active {
+		@apply bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md hover:from-green-600 hover:to-emerald-600;
+	}
+
+	/* Reusable inputs */
+	.input {
+		@apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition bg-white placeholder:text-gray-400;
+	}
+
+	/* Drag & drop zone */
+	.dropzone {
+		@apply border-2 border-dashed rounded-xl p-8 text-center transition border-green-300 bg-white hover:border-orange-400;
+	}
+	.dropzone-active {
+		@apply border-orange-500 bg-orange-50;
+	}
+
+	/* Small clickable chips */
+	.chip {
+		@apply text-left p-3 rounded-lg bg-green-50 hover:bg-orange-100 text-green-700 hover:text-orange-700 text-sm transition-colors border border-green-200 hover:border-orange-200;
+	}
+
+	/* Stat cards */
+	.stat-card {
+		@apply bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition;
+	}
+
+	/* Section title */
+	.section-title {
+		@apply text-2xl font-bold text-green-800 tracking-tight;
+	}
+
+	/* Orange accent utilities */
+	.accent-orange {
+		@apply text-orange-600 bg-orange-50 border-orange-200;
+	}
+	
+	.accent-btn {
+		@apply bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white;
+	}
+}

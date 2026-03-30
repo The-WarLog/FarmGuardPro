@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EPICS Auth Tester</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #1a2233;
+      --muted: #6b7280;
+      --primary: #0b66ff;
+      --primary-2: #0a55d1;
+      --border: #dbe2ee;
+      --ok: #0a7d42;
+      --err: #c52828;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #e7efff 0%, var(--bg) 45%, #eef2f8 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(18, 39, 78, 0.08);
+    }
+
+    h1, h2 {
+      margin: 0 0 12px;
+    }
+
+    p {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    .row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .row-3 {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: var(--primary-2);
+    }
+
+    .btn-secondary {
+      background: #374151;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      width: auto;
+      min-width: 120px;
+    }
+
+    .status {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status.ok { color: var(--ok); }
+    .status.err { color: var(--err); }
+
+    @media (max-width: 760px) {
+      .row, .row-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>EPICS Auth Tester</h1>
+      <p>Use this page to test register, login, and protected API calls quickly.</p>
+      <div class="row">
+        <div>
+          <label for="baseUrl">Base URL</label>
+          <input id="baseUrl" value="http://127.0.0.1:8000" />
+        </div>
+        <div>
+          <label for="token">JWT Token</label>
+          <input id="token" placeholder="Token appears here after login/register" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Register / Login</h2>
+      <div class="row-3">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" value="Test User" />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" value="test@example.com" />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input id="password" type="password" value="password123" />
+        </div>
+      </div>
+      <div class="actions" style="margin-top: 12px;">
+        <button id="registerBtn">Register</button>
+        <button id="loginBtn">Login</button>
+      </div>
+      <div id="authStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Protected Calls</h2>
+      <p>These require a valid token in the JWT Token field.</p>
+      <div class="actions">
+        <button id="meBtn" class="btn-secondary">Get /api/auth/me</button>
+        <button id="profileBtn" class="btn-secondary">Get /api/profile/user-bio</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Response</h2>
+      <textarea id="output" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    const byId = (id) => document.getElementById(id);
+
+    const baseUrlEl = byId("baseUrl");
+    const tokenEl = byId("token");
+    const nameEl = byId("name");
+    const emailEl = byId("email");
+    const passwordEl = byId("password");
+    const outputEl = byId("output");
+    const authStatusEl = byId("authStatus");
+
+    function setOutput(data) {
+      outputEl.value = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    function setStatus(message, ok) {
+      authStatusEl.textContent = message;
+      authStatusEl.className = "status " + (ok ? "ok" : "err");
+    }
+
+    async function apiCall(path, options = {}) {
+      const base = baseUrlEl.value.trim().replace(/\/$/, "");
+      const token = tokenEl.value.trim();
+
+      const headers = {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      };
+
+      if (token) {
+        headers.Authorization = "Bearer " + token;
+        
+      }
+
+      const res = await fetch(base + path, { ...options, headers });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = { message: "Non-JSON response" };
+      }
+
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    async function register() {
+      const payload = {
+        name: nameEl.value.trim(),
+        email: emailEl.value.trim(),
+        password: passwordEl.value,
+        is_admin: false,
+      };
+
+      const result = await apiCall("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      setOutput(result);
+      if (result.ok && result.data.access_token) {
+        tokenEl.value = result.data.access_token;
+        setStatus("Registered successfully. Token saved.", true);
+      } else {
+        setStatus("Register failed.", false);
+      }
+    }
+
+    async function login() {
+      const payload = {
+        email: emailEl.value.trim(),
+        password: passwordEl.value,
+      };
+
+      const result = await apiCall("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      setOutput(result);
+      if (result.ok && result.data.access_token) {
+        tokenEl.value = result.data.access_token;
+        setStatus("Login success. Token saved.", true);
+      } else {
+        setStatus("Login failed.", false);
+      }
+    }
+
+    async function getMe() {
+      const result = await apiCall("/api/auth/me", { method: "GET" });
+      setOutput(result);
+    }
+
+    async function getProfile() {
+      const result = await apiCall("/api/profile/user-bio", { method: "GET" });
+      setOutput(result);
+    }
+
+    byId("registerBtn").addEventListener("click", register);
+    byId("loginBtn").addEventListener("click", login);
+    byId("meBtn").addEventListener("click", getMe);
+    byId("profileBtn").addEventListener("click", getProfile);
+  </script>
+</body>
+</html>

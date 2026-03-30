@@ -1,0 +1,33 @@
+# FastAPI & Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Database & ORM
+sqlmodel==0.0.14
+sqlalchemy==2.0.23
+
+# ML & Image Processing
+transformers==4.35.2
+torch==2.1.1
+torchvision==0.16.1
+Pillow==10.1.0
+
+# HTTP & Async
+requests==2.31.0
+aiohttp==3.9.1
+httpx==0.25.1
+
+# Authentication & Security
+PyJWT==2.8.1
+python-dotenv==1.0.0
+
+# Production ASGI Server
+gunicorn==21.2.0
+
+# Azure Integration (optional, for cloud deployment)
+azure-storage-blob==12.19.0
+azure-identity==1.14.0
+
+# Monitoring & Logging (optional)
+python-json-logger==2.0.7
