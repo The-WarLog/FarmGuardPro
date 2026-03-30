@@ -76,6 +76,8 @@ const formatPercent = (value) => {
   return `${value.toFixed(1)}%`;
 };
 
+const clampPercent = (value) => Math.max(0, Math.min(100, value));
+
 const AnalyticsTab = ({ language }) => {
   const [agriIndicators, setAgriIndicators] = useState(null);
   const [indicatorState, setIndicatorState] = useState({ loading: true, error: '' });
@@ -91,6 +93,14 @@ const AnalyticsTab = ({ language }) => {
   });
   const [personalAnalytics, setPersonalAnalytics] = useState({ total_scans: 0, healthy_plants: 0, diseased_plants: 0 });
   const [personalAnalyticsState, setPersonalAnalyticsState] = useState({ loading: true, error: '' });
+  const [progressReport, setProgressReport] = useState({
+    monthProgress: 75,
+    detectionRate: 92,
+    healthImprovement: 68,
+    avgAccuracy: 94.2,
+    reliability: 89.5,
+    updateCount: 0
+  });
 
   const fetchIndicators = async () => {
     setIndicatorState({ loading: true, error: '' });
@@ -156,6 +166,37 @@ const AnalyticsTab = ({ language }) => {
     
     // Auto-refresh personal stats every 15 seconds
     const intervalId = setInterval(fetchPersonalStatsData, 15000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    // Demo-only interactive updates: every 2 minutes, run 3 times with +/- 1-2% changes.
+    const scriptedDeltas = [
+      { month: +1, detection: -1, health: +2, accuracy: +0.4, reliability: -0.3 },
+      { month: -2, detection: +1, health: -1, accuracy: -0.5, reliability: +0.2 },
+      { month: +1, detection: +2, health: +1, accuracy: +0.3, reliability: +0.4 }
+    ];
+
+    let tick = 0;
+    const intervalId = setInterval(() => {
+      if (tick >= scriptedDeltas.length) {
+        clearInterval(intervalId);
+        return;
+      }
+
+      const delta = scriptedDeltas[tick];
+      setProgressReport((prev) => ({
+        monthProgress: clampPercent(prev.monthProgress + delta.month),
+        detectionRate: clampPercent(prev.detectionRate + delta.detection),
+        healthImprovement: clampPercent(prev.healthImprovement + delta.health),
+        avgAccuracy: clampPercent(Number((prev.avgAccuracy + delta.accuracy).toFixed(1))),
+        reliability: clampPercent(Number((prev.reliability + delta.reliability).toFixed(1))),
+        updateCount: prev.updateCount + 1
+      }));
+
+      tick += 1;
+    }, 120000);
+
     return () => clearInterval(intervalId);
   }, []);
 
@@ -423,30 +464,30 @@ const AnalyticsTab = ({ language }) => {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-sm font-semibold text-gray-700">{language === 'hindi' ? 'इस महीने की प्रगति' : 'This Month Progress'}</p>
-                <span className="text-xs font-semibold text-blue-600">75%</span>
+                <span className="text-xs font-semibold text-blue-600">{progressReport.monthProgress}%</span>
               </div>
               <div className="h-3 w-full rounded-full bg-gray-200">
-                <div className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600" style={{ width: '75%' }}></div>
+                <div className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600" style={{ width: `${progressReport.monthProgress}%` }}></div>
               </div>
             </div>
 
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-sm font-semibold text-gray-700">{language === 'hindi' ? 'बीमारी की पहचान दर' : 'Disease Detection Rate'}</p>
-                <span className="text-xs font-semibold text-green-600">92%</span>
+                <span className="text-xs font-semibold text-green-600">{progressReport.detectionRate}%</span>
               </div>
               <div className="h-3 w-full rounded-full bg-gray-200">
-                <div className="h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600" style={{ width: '92%' }}></div>
+                <div className="h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600" style={{ width: `${progressReport.detectionRate}%` }}></div>
               </div>
             </div>
 
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-sm font-semibold text-gray-700">{language === 'hindi' ? 'पौधों का स्वास्थ्य सुधार' : 'Plant Health Improvement'}</p>
-                <span className="text-xs font-semibold text-amber-600">68%</span>
+                <span className="text-xs font-semibold text-amber-600">{progressReport.healthImprovement}%</span>
               </div>
               <div className="h-3 w-full rounded-full bg-gray-200">
-                <div className="h-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600" style={{ width: '68%' }}></div>
+                <div className="h-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600" style={{ width: `${progressReport.healthImprovement}%` }}></div>
               </div>
             </div>
 
@@ -455,13 +496,18 @@ const AnalyticsTab = ({ language }) => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-lg bg-blue-50 p-3 border border-blue-100">
                   <p className="text-xs text-gray-600">{language === 'hindi' ? 'औसत सटीकता' : 'Avg Accuracy'}</p>
-                  <p className="text-lg font-bold text-blue-700 mt-1">94.2%</p>
+                  <p className="text-lg font-bold text-blue-700 mt-1">{progressReport.avgAccuracy}%</p>
                 </div>
                 <div className="rounded-lg bg-green-50 p-3 border border-green-100">
                   <p className="text-xs text-gray-600">{language === 'hindi' ? 'निर्भरता दर' : 'Reliability'}</p>
-                  <p className="text-lg font-bold text-green-700 mt-1">89.5%</p>
+                  <p className="text-lg font-bold text-green-700 mt-1">{progressReport.reliability}%</p>
                 </div>
               </div>
+              <p className="mt-3 text-[11px] text-gray-500">
+                {language === 'hindi'
+                  ? 'अपडेट हर 2 मिनट में'
+                  : 'Updates in 2 mins'}
+              </p>
             </div>
           </div>
         </div>
