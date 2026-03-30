@@ -13,11 +13,11 @@ const Footer = ({ currentTexts, language }) => {
         <p className="text-gray-400 mb-4">
           {language === 'hindi' ? 'आधुनिक तकनीक से किसानों की सेवा में' : 'Serving farmers with modern technology'}
         </p>
-        <p className="text-sm text-gray-400">
-          © 2024 FarmGuard Pro. {language === 'hindi' ? 'सभी अधिकार सुरक्षित।' : 'All rights reserved.'}
+        <p className="text-sm text-emerald-300 font-medium">
+          {language === 'hindi' ? 'EPICS कॉलेज प्रोजेक्ट' : 'EPICS College Project'}
         </p>
-        <p className="text-xs text-gray-400 mt-2">
-          Made by <span className="font-semibold text-blue-300">Varun Tiwari</span>
+        <p className="text-xs mt-2 text-transparent transition-colors duration-200 hover:text-sky-300">
+          Made by <span className="font-semibold">Varun Tiwari and team</span>
         </p>
       </div>
     </footer>
