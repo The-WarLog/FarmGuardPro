@@ -33,13 +33,13 @@ const Navigation = ({ activeTab, setActiveTab, currentTexts, language }) => {
             <button
               type="button"
               onClick={() => setIsAboutOpen((prev) => !prev)}
-              className="rounded-lg border border-violet-300 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-800 hover:bg-violet-100"
+              className="rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-xs font-semibold text-green-800 hover:bg-green-100"
             >
               {language === 'hindi' ? 'हमारे बारे में' : 'About'}
             </button>
 
             {isAboutOpen && (
-              <div className="absolute right-0 mt-2 w-80 rounded-lg border border-violet-200 bg-violet-50 p-3 text-xs text-violet-900 shadow-lg">
+              <div className="absolute right-0 mt-2 w-80 rounded-lg border border-green-200 bg-green-50 p-3 text-xs text-green-900 shadow-lg">
                 <p className="leading-relaxed">
                   {language === 'hindi'
                     ? 'यह कॉलेज का एक ग्रुप प्रोजेक्ट है, जो किसानों की मदद के लिए बनाया गया है। इमेज प्रोसेसिंग और चैटबॉट के माध्यम से हम रोग पहचान और उपयोगी सलाह देते हैं।'
