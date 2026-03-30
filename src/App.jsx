@@ -487,9 +487,6 @@ const App = () => {
   };
 
   return (
-    !currentUser ? (
-      <AuthPanel language={language} onLogin={handleLogin} onRegister={handleRegister} />
-    ) : (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
       <Header 
         currentTexts={currentTexts}
@@ -504,6 +501,7 @@ const App = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currentTexts={currentTexts}
+        language={language}
       />
       <main className="container mx-auto px-4 py-8">
         {renderTabContent()}
@@ -517,7 +515,6 @@ const App = () => {
       )}
       <Footer currentTexts={currentTexts} />
     </div>
-    )
   );
 };
 

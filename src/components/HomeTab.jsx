@@ -224,128 +224,131 @@ const HomeTab = ({ currentTexts, projectInfo, language, setActiveTab }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-blue-100 shadow-md p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-800 inline-flex items-center gap-2">
-              <CloudSun className="h-4 w-4 text-sky-500" />
-              {language === 'hindi' ? 'मौसम अपडेट' : 'Weather Update'}
-            </h3>
-          </div>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white rounded-xl border border-blue-100 shadow-md p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-gray-800 inline-flex items-center gap-2">
+                <CloudSun className="h-4 w-4 text-sky-500" />
+                {language === 'hindi' ? 'मौसम अपडेट' : 'Weather Update'}
+              </h3>
+            </div>
 
-          <div className="mb-3 flex items-center gap-2">
-            <input
-              type="text"
-              value={cityQuery}
-              onChange={(e) => setCityQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleWeatherSearch();
-              }}
-              placeholder={language === 'hindi' ? 'शहर खोजें...' : 'Search city...'}
-              className="input h-9 text-sm"
-            />
-            <button
-              type="button"
-              onClick={handleWeatherSearch}
-              className="inline-flex h-9 items-center gap-1 rounded-md bg-sky-50 text-sky-700 px-3 text-xs font-medium hover:bg-sky-100"
-            >
-              {language === 'hindi' ? 'खोजें' : 'Search'}
-            </button>
-            <button
-              type="button"
-              onClick={() => fetchWeather(cityQuery)}
-              className="inline-flex h-9 items-center gap-1 rounded-md bg-sky-50 text-sky-700 px-2 text-xs font-medium hover:bg-sky-100"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-            </button>
-          </div>
+            <div className="mb-3 flex items-center gap-2">
+              <input
+                type="text"
+                value={cityQuery}
+                onChange={(e) => setCityQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleWeatherSearch();
+                }}
+                placeholder={language === 'hindi' ? 'शहर खोजें...' : 'Search city...'}
+                className="input h-9 text-sm"
+              />
+              <button
+                type="button"
+                onClick={handleWeatherSearch}
+                className="inline-flex h-9 items-center gap-1 rounded-md bg-sky-50 text-sky-700 px-3 text-xs font-medium hover:bg-sky-100"
+              >
+                {language === 'hindi' ? 'खोजें' : 'Search'}
+              </button>
+              <button
+                type="button"
+                onClick={() => fetchWeather(cityQuery)}
+                className="inline-flex h-9 items-center gap-1 rounded-md bg-sky-50 text-sky-700 px-2 text-xs font-medium hover:bg-sky-100"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
+            </div>
 
-          {weatherLoading ? (
-            <p className="text-sm text-gray-500">{language === 'hindi' ? 'मौसम लोड हो रहा है...' : 'Loading weather...'}</p>
-          ) : weatherError ? (
-            <p className="text-sm text-red-600">{weatherError}</p>
-          ) : weather ? (
-            <div className="space-y-2">
-              <div className="rounded-lg bg-sky-50 border border-sky-100 p-3">
-                <div className="text-xs text-gray-600">{weather.city}</div>
-                <div className="text-lg font-semibold text-gray-800">
-                  {getWeatherEmoji(weather.condition)} {Math.round(weather.temperature)}°C
-                </div>
-                <div className="text-xs text-gray-600">{weather.condition}</div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-md border border-gray-100 p-2">💧 {language === 'hindi' ? 'नमी' : 'Humidity'}: <span className="font-semibold">{weather.humidity}%</span></div>
-                <div className="rounded-md border border-gray-100 p-2">🍃 {language === 'hindi' ? 'हवा' : 'Wind'}: <span className="font-semibold">{weather.windSpeed} km/h</span></div>
-              </div>
-              <div className="rounded-md border border-sky-100 bg-sky-50 p-2 text-xs text-gray-700">
-                🌦️ {language === 'hindi' ? 'बारिश संभावना' : 'Rain prediction'}:{' '}
-                <span className="font-semibold">
-                  {typeof weather.rainChance === 'number' ? `${weather.rainChance}%` : 'N/A'}
-                </span>{' '}
-                <span className="text-gray-500">({getRainOutlook(weather.rainChance)})</span>
-              </div>
-              {Array.isArray(weather.rainForecast) && weather.rainForecast.length > 0 && (
-                <div>
-                  <p className="mb-1 text-[11px] font-medium text-gray-600">
-                    {language === 'hindi' ? 'अगले 3 दिन की बारिश' : 'Next 3 days rain'}
-                  </p>
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    {weather.rainForecast.slice(0, 3).map((day, index) => (
-                      <div key={`${day.date}-${index}`} className="rounded-md border border-sky-100 bg-white p-2 text-center">
-                        <div className="text-gray-500">{formatDayShort(day.date)}</div>
-                        <div className="mt-1 font-semibold text-sky-700">{typeof day.chance === 'number' ? `${day.chance}%` : 'N/A'}</div>
-                      </div>
-                    ))}
+            {weatherLoading ? (
+              <p className="text-sm text-gray-500">{language === 'hindi' ? 'मौसम लोड हो रहा है...' : 'Loading weather...'}</p>
+            ) : weatherError ? (
+              <p className="text-sm text-red-600">{weatherError}</p>
+            ) : weather ? (
+              <div className="space-y-2">
+                <div className="rounded-lg bg-sky-50 border border-sky-100 p-3">
+                  <div className="text-xs text-gray-600">{weather.city}</div>
+                  <div className="text-lg font-semibold text-gray-800">
+                    {getWeatherEmoji(weather.condition)} {Math.round(weather.temperature)}°C
                   </div>
+                  <div className="text-xs text-gray-600">{weather.condition}</div>
                 </div>
-              )}
-              <div className="text-[11px] text-gray-500">
-                {language === 'hindi' ? 'स्रोत:' : 'Source:'} {weatherSource === 'backend' ? (language === 'hindi' ? 'आपका बैकएंड' : 'Your backend') : 'Open-Meteo'}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-md border border-gray-100 p-2">💧 {language === 'hindi' ? 'नमी' : 'Humidity'}: <span className="font-semibold">{weather.humidity}%</span></div>
+                  <div className="rounded-md border border-gray-100 p-2">🍃 {language === 'hindi' ? 'हवा' : 'Wind'}: <span className="font-semibold">{weather.windSpeed} km/h</span></div>
+                </div>
+                <div className="rounded-md border border-sky-100 bg-sky-50 p-2 text-xs text-gray-700">
+                  🌦️ {language === 'hindi' ? 'बारिश संभावना' : 'Rain prediction'}:{' '}
+                  <span className="font-semibold">
+                    {typeof weather.rainChance === 'number' ? `${weather.rainChance}%` : 'N/A'}
+                  </span>{' '}
+                  <span className="text-gray-500">({getRainOutlook(weather.rainChance)})</span>
+                </div>
+                {Array.isArray(weather.rainForecast) && weather.rainForecast.length > 0 && (
+                  <div>
+                    <p className="mb-1 text-[11px] font-medium text-gray-600">
+                      {language === 'hindi' ? 'अगले 3 दिन की बारिश' : 'Next 3 days rain'}
+                    </p>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      {weather.rainForecast.slice(0, 3).map((day, index) => (
+                        <div key={`${day.date}-${index}`} className="rounded-md border border-sky-100 bg-white p-2 text-center">
+                          <div className="text-gray-500">{formatDayShort(day.date)}</div>
+                          <div className="mt-1 font-semibold text-sky-700">{typeof day.chance === 'number' ? `${day.chance}%` : 'N/A'}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="text-[11px] text-gray-500">
+                  {language === 'hindi' ? 'स्रोत:' : 'Source:'} {weatherSource === 'backend' ? (language === 'hindi' ? 'आपका बैकएंड' : 'Your backend') : 'Open-Meteo'}
+                </div>
               </div>
-            </div>
-          ) : null}
-        </div>
-
-        <div className="bg-white rounded-xl border border-emerald-100 shadow-md p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-800 inline-flex items-center gap-2">
-              <Newspaper className="h-4 w-4 text-emerald-600" />
-              {language === 'hindi' ? 'ताज़ा कृषि समाचार' : 'Latest Agri News'}
-            </h3>
-            <button
-              type="button"
-              onClick={fetchNews}
-              className="inline-flex items-center gap-1 rounded-md bg-emerald-50 text-emerald-700 px-2 py-1 text-xs font-medium hover:bg-emerald-100"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              {language === 'hindi' ? 'रिफ्रेश' : 'Refresh'}
-            </button>
+            ) : null}
           </div>
 
-          {newsLoading ? (
-            <p className="text-sm text-gray-500">{language === 'hindi' ? 'समाचार लोड हो रहे हैं...' : 'Loading news...'}</p>
-          ) : newsError ? (
-            <p className="text-sm text-red-600">{newsError}</p>
-          ) : (
-            <div className="space-y-2">
-              {newsItems.map((item, index) => (
-                <a
-                  key={`${item.url || item.title}-${index}`}
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block rounded-lg border border-emerald-100 p-2 hover:bg-emerald-50"
-                >
-                  <p className="text-sm text-gray-800 line-clamp-2">{item.title}</p>
-                  <p className="text-[11px] text-gray-500 mt-1">
-                    {item.published_at ? new Date(item.published_at).toLocaleDateString() : ''}
-                    {item.source ? ` • ${item.source}` : ''}
-                  </p>
-                </a>
-              ))}
+          <div className="bg-white rounded-xl border border-emerald-100 shadow-md p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-gray-800 inline-flex items-center gap-2">
+                <Newspaper className="h-4 w-4 text-emerald-600" />
+                {language === 'hindi' ? 'ताज़ा कृषि समाचार' : 'Latest Agri News'}
+              </h3>
+              <button
+                type="button"
+                onClick={fetchNews}
+                className="inline-flex items-center gap-1 rounded-md bg-emerald-50 text-emerald-700 px-2 py-1 text-xs font-medium hover:bg-emerald-100"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                {language === 'hindi' ? 'रिफ्रेश' : 'Refresh'}
+              </button>
             </div>
-          )}
+
+            {newsLoading ? (
+              <p className="text-sm text-gray-500">{language === 'hindi' ? 'समाचार लोड हो रहे हैं...' : 'Loading news...'}</p>
+            ) : newsError ? (
+              <p className="text-sm text-red-600">{newsError}</p>
+            ) : (
+              <div className="space-y-2">
+                {newsItems.map((item, index) => (
+                  <a
+                    key={`${item.url || item.title}-${index}`}
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block rounded-lg border border-emerald-100 p-2 hover:bg-emerald-50"
+                  >
+                    <p className="text-sm text-gray-800 line-clamp-2">{item.title}</p>
+                    <p className="text-[11px] text-gray-500 mt-1">
+                      {item.published_at ? new Date(item.published_at).toLocaleDateString() : ''}
+                      {item.source ? ` • ${item.source}` : ''}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
